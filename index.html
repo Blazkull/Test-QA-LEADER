@@ -10,6 +10,7 @@
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background-color: #ffffff;
@@ -28,6 +29,9 @@
 
         .header {
             margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         h1 {
@@ -35,6 +39,27 @@
             font-weight: 600;
             color: #1a1a1a;
             letter-spacing: -0.02em;
+        }
+
+        .add-user-btn {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-user-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         .table-container {
@@ -140,20 +165,157 @@
             }
         }
 
-        /* Subtle animations */
-        .table-container {
-            animation: fadeIn 0.3s ease-out;
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeInOverlay 0.2s ease;
         }
 
-        @keyframes fadeIn {
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeInOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            width: 90%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
             from {
                 opacity: 0;
-                transform: translateY(8px);
+                transform: scale(0.95) translateY(20px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: scale(1) translateY(0);
             }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            background-color: white;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: #f9fafb;
+            border-color: #9ca3af;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+        .btn-primary:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -161,42 +323,173 @@
     <div class="container">
         <div class="header">
             <h1>Usuarios</h1>
+            <button class="add-user-btn" data-testid="add-user-button" onclick="openModal()">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                </svg>
+                Agregar Usuario
+            </button>
         </div>
         
         <div class="table-container">
-            <table>
+            <table data-testid="users-table">
                 <thead>
                     <tr>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Rol</th>
+                        <th data-testid="header-name">Nombre</th>
+                        <th data-testid="header-email">Email</th>
+                        <th data-testid="header-role">Rol</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td class="user-name">Ana Pérez</td>
-                        <td class="user-email">ana.perez@empresa.com</td>
-                        <td>
+                <tbody data-testid="users-tbody">
+                    <tr data-testid="user-row-0">
+                        <td class="user-name" data-testid="user-name-0">Ana Pérez</td>
+                        <td class="user-email" data-testid="user-email-0">ana.perez@empresa.com</td>
+                        <td data-testid="user-role-0">
                             <span class="role-badge role-admin">Admin</span>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="user-name">Luis Gómez</td>
-                        <td class="user-email">luis.gomez@empresa.com</td>
-                        <td>
+                    <tr data-testid="user-row-1">
+                        <td class="user-name" data-testid="user-name-1">Luis Gómez</td>
+                        <td class="user-email" data-testid="user-email-1">luis.gomez@empresa.com</td>
+                        <td data-testid="user-role-1">
                             <span class="role-badge role-user">User</span>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="user-name">Marta Díaz</td>
-                        <td class="user-email">marta.diaz@empresa.com</td>
-                        <td>
+                    <tr data-testid="user-row-2">
+                        <td class="user-name" data-testid="user-name-2">Marta Díaz</td>
+                        <td class="user-email" data-testid="user-email-2">marta.diaz@empresa.com</td>
+                        <td data-testid="user-role-2">
                             <span class="role-badge role-user">User</span>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
+
+        <!-- Modal para agregar usuario -->
+        <div class="modal-overlay" data-testid="add-user-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 class="modal-title">Agregar Nuevo Usuario</h3>
+                    <button class="close-btn" data-testid="modal-close-button" onclick="closeModal()">&times;</button>
+                </div>
+                
+                <form data-testid="add-user-form" onsubmit="addUser(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="userName">Nombre completo</label>
+                        <input 
+                            type="text" 
+                            id="userName" 
+                            class="form-input" 
+                            data-testid="input-name"
+                            placeholder="Ingrese el nombre completo" 
+                            required
+                        />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="userEmail">Email</label>
+                        <input 
+                            type="email" 
+                            id="userEmail" 
+                            class="form-input" 
+                            data-testid="input-email"
+                            placeholder="usuario@empresa.com" 
+                            required
+                        />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="userRole">Rol</label>
+                        <select 
+                            id="userRole" 
+                            class="form-select" 
+                            data-testid="select-role"
+                            required
+                        >
+                            <option value="">Seleccionar rol</option>
+                            <option value="User">User</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" data-testid="cancel-button" onclick="closeModal()">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn-primary" data-testid="submit-button">
+                            Agregar Usuario
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            let userCounter = 3;
+
+            function openModal() {
+                document.querySelector('[data-testid="add-user-modal"]').classList.add('active');
+            }
+
+            function closeModal() {
+                document.querySelector('[data-testid="add-user-modal"]').classList.remove('active');
+                document.querySelector('[data-testid="add-user-form"]').reset();
+            }
+
+            function addUser(event) {
+                event.preventDefault();
+                
+                const name = document.getElementById('userName').value;
+                const email = document.getElementById('userEmail').value;
+                const role = document.getElementById('userRole').value;
+
+                if (!name || !email || !role) {
+                    alert('Por favor complete todos los campos');
+                    return;
+                }
+
+                const tbody = document.querySelector('[data-testid="users-tbody"]');
+                const newRow = document.createElement('tr');
+                newRow.setAttribute('data-testid', `user-row-${userCounter}`);
+                
+                const roleClass = role === 'Admin' ? 'role-admin' : 'role-user';
+                
+                newRow.innerHTML = `
+                    <td class="user-name" data-testid="user-name-${userCounter}">${name}</td>
+                    <td class="user-email" data-testid="user-email-${userCounter}">${email}</td>
+                    <td data-testid="user-role-${userCounter}">
+                        <span class="role-badge ${roleClass}">${role}</span>
+                    </td>
+                `;
+
+                tbody.appendChild(newRow);
+                userCounter++;
+                
+                closeModal();
+                
+                // Mostrar feedback visual
+                newRow.style.backgroundColor = '#ecfdf5';
+                setTimeout(() => {
+                    newRow.style.backgroundColor = '';
+                    newRow.style.transition = 'background-color 0.5s ease';
+                }, 2000);
+            }
+
+            // Cerrar modal al hacer click fuera de él
+            document.querySelector('[data-testid="add-user-modal"]').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+
+            // Cerrar modal con la tecla Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        </script>
     </div>
 </body>
 </html>
